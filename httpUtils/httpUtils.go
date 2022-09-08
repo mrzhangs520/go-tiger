@@ -3,7 +3,7 @@ package httpUtils
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mitchellh/mapstructure"
-	"go-tiger/esLogger"
+	"github.com/mrzhangs520/go-tiger/esLogger"
 	"net/http"
 )
 

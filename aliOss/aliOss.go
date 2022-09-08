@@ -3,9 +3,9 @@ package aliOss
 import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"go-tiger/config"
-	"go-tiger/dError"
-	"go-tiger/tools"
+	"github.com/mrzhangs520/go-tiger/config"
+	"github.com/mrzhangs520/go-tiger/dError"
+	"github.com/mrzhangs520/go-tiger/tools"
 	"path/filepath"
 	"strings"
 	"time"

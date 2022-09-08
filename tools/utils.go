@@ -3,7 +3,7 @@ package tools
 import (
 	"errors"
 	"fmt"
-	"go-tiger/dError"
+	"github.com/mrzhangs520/go-tiger/dError"
 	"os"
 	"path/filepath"
 )

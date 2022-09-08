@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"lib/config"
-	"lib/tools"
+	"github.com/mrzhangs520/go-tiger/config"
+	"github.com/mrzhangs520/go-tiger/tools"
 	"time"
 )
 

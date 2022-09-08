@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
-	"go-tiger/dError"
-	"go-tiger/tools"
+	"github.com/mrzhangs520/go-tiger/dError"
+	"github.com/mrzhangs520/go-tiger/tools"
 	"gopkg.in/ini.v1"
 )
 
