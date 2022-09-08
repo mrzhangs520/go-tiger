@@ -5,17 +5,8 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/mrzhangs520/go-tiger/config"
 	"github.com/mrzhangs520/go-tiger/dError"
-	"github.com/mrzhangs520/go-tiger/tools"
 	"path/filepath"
-	"strings"
 	"time"
-)
-
-// 上传的文件路径
-const (
-	SurfaceImage = "surface"
-	TextImage    = "textImage"
-	AppendGraph  = "appendGraph"
 )
 
 type myOssType struct {
@@ -60,18 +51,4 @@ func (m *myOssType) UploadFile(localFilePath, dir string) string {
 
 	// 返回新地址
 	return fmt.Sprintf("%s/%s", cdnHost, filePath)
-}
-
-// HandleUrlHost 地址域名转化成内网
-func HandleUrlHost(url string) string {
-	if "local" == tools.Mode {
-		return url
-	}
-
-	url = strings.Replace(url, "produce01.xiyin.love", "baiyin-produce.oss-cn-hangzhou-internal.aliyuncs.com", 1)
-	url = strings.Replace(url, "baiyin-produce.oss-cn-hangzhou.aliyuncs.com", "baiyin-produce.oss-cn-hangzhou-internal.aliyuncs.com", 1)
-	url = strings.Replace(url, "baiyin-dev.oss-cn-hangzhou.aliyuncs.com", "baiyin-dev.oss-cn-hangzhou-internal.aliyuncs.com", 1)
-	url = strings.Replace(url, "dev01.xiyin.love", "baiyin-dev.oss-cn-hangzhou-internal.aliyuncs.com", 1)
-
-	return url
 }
