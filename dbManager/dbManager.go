@@ -3,7 +3,6 @@ package dbManager
 import (
 	"fmt"
 	"github.com/mrzhangs520/go-tiger/config"
-	"github.com/mrzhangs520/go-tiger/core"
 	"github.com/mrzhangs520/go-tiger/dError"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -13,8 +12,6 @@ import (
 var db *gorm.DB
 
 func init() {
-	core.Start()
-
 	mysqlConfig := config.GetInstance().Section("mysql")
 	username := mysqlConfig.Key("username").Value()
 	password := mysqlConfig.Key("password").Value()

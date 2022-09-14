@@ -2,6 +2,7 @@ package dbManager
 
 import (
 	"github.com/davecgh/go-spew/spew"
+	"github.com/mrzhangs520/go-tiger/core"
 	"gorm.io/gorm"
 	"testing"
 	"time"
@@ -36,6 +37,8 @@ func (a *AdminModel) TableName() string {
 }
 
 func TestCreate(t *testing.T) {
+	core.Start()
+
 	adminInfo := new(AdminModel)
 
 	GetInstance().Debug().Create(adminInfo)
