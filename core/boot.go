@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"fmt"
 	"github.com/mrzhangs520/go-tiger/dError"
 	"os"
@@ -24,7 +23,7 @@ func init() {
 func initAppPth() {
 	dirString, err := os.Getwd()
 	if nil != err {
-		panic(dError.NewError("tools.init.os.Getwd", err))
+		panic(dError.NewError("找不到项目根目录！", "tools.init.os.Getwd"))
 	}
 	for {
 		mainPath := fmt.Sprintf("%s/main.go", dirString)
@@ -34,7 +33,7 @@ func initAppPth() {
 		}
 		// 直到根目录依然没有找到main.go
 		if "/" == dirString {
-			panic(dError.NewError("tools.init.times", errors.New("找不到项目根目录！")))
+			panic(dError.NewError("找不到项目根目录！", "tools.init.times"))
 		}
 		dirString = filepath.Dir(dirString)
 	}

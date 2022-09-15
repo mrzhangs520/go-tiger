@@ -29,13 +29,13 @@ func init() {
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if nil != err {
-		panic(dError.NewError("dbManager.init.gorm.Open", err))
+		panic(dError.NewError("连接数据库出错", "dbManager.init.gorm.Open", err))
 	}
 	// 控制数据库连接池
 	sqlDB, err := db.DB()
 
 	if nil != err {
-		panic(dError.NewError("dbManager.init.db.DB", err))
+		panic(dError.NewError("数据库连接池错误", "dbManager.init.db.DB", err))
 	}
 
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量

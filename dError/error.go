@@ -1,19 +1,31 @@
 package dError
 
-import "fmt"
+import "errors"
 
 type errorType struct {
-	PanicCode string
-	PanicMsg  error
+	PanicCode    string
+	SourceErr    error
+	PanicUserMag string
 }
 
-func NewError(PanicCode string, panicMsg error) *errorType {
+func NewError(panicUserMag, panicCode string, sourceErrList ...error) *errorType {
+	var err error
+	if 0 == len(sourceErrList) {
+		err = errors.New("")
+	} else {
+		err = sourceErrList[0]
+	}
 	return &errorType{
-		PanicCode: PanicCode,
-		PanicMsg:  panicMsg,
+		PanicUserMag: panicUserMag,
+		PanicCode:    panicCode,
+		SourceErr:    err,
 	}
 }
 
 func (e *errorType) Error() string {
-	return fmt.Sprintf("(%s) %s", e.PanicCode, e.PanicMsg.Error())
+	return e.PanicUserMag
+}
+
+func (e *errorType) GetContent() *errorType {
+	return e
 }

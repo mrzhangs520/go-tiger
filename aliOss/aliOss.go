@@ -22,11 +22,11 @@ func New() *myOssType {
 
 	client, err := oss.New(endpoint, accessKeyId, accessKeySecret)
 	if err != nil {
-		panic(dError.NewError("aliOss.UploadFile.oss.New", err))
+		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.oss.New", err))
 	}
 	bucket, err := client.Bucket(bucketName)
 	if err != nil {
-		panic(dError.NewError("aliOss.UploadFile.client.Bucket", err))
+		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.client.Bucket", err))
 	}
 	myOss := new(myOssType)
 	myOss.bucket = bucket
@@ -46,7 +46,7 @@ func (m *myOssType) UploadFile(localFilePath, dir string) string {
 	// 上传
 	err := m.bucket.PutObjectFromFile(filePath, localFilePath)
 	if err != nil {
-		panic(dError.NewError("aliOss.UploadFile.bucket.PutObjectFromFile", err))
+		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.bucket.PutObjectFromFile", err))
 	}
 
 	// 返回新地址
