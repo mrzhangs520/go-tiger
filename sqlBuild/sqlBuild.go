@@ -73,7 +73,7 @@ func (m *MysqlType) build() {
 
 	// 处理where条件
 	if 0 < len(m.whereList) {
-		m.sql = fmt.Sprintf("%swhere", m.sql)
+		m.sql = fmt.Sprintf("%s where", m.sql)
 	}
 	for index, where := range m.whereList {
 		if 0 == index {
