@@ -22,7 +22,7 @@ func init() {
 
 	//拼接下dsn参数, dsn格式可以参考上面的语法，这里使用Sprintf动态拼接dsn参数，因为一般数据库连接参数，我们都是保存在配置文件里面，需要从配置文件加载参数，然后拼接dsn。
 	// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&loc=Local&timeout=%s", username, password, host, port, dbname, timeout)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&loc=Local&timeout=%s", username, password, host, port, dbname, timeout)
 
 	var err error
 
