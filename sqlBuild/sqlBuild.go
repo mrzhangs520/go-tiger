@@ -5,22 +5,18 @@ import (
 	"github.com/mrzhangs520/go-tiger/dbManager"
 )
 
-type JoinTableType struct {
-	joinTableName string
-	condition     string
-	join          string
-}
-
 type MysqlType struct {
+	orderByString string
+	groupByFiled  string
 	filed         string
 	sql           string
 	limit         string
 	tableName     string
-	joinTableList []JoinTableType
+	joinTableList []string
 	whereList     []string
 }
 
-func (m *MysqlType) SetPage(page, pageSize uint) *MysqlType {
+func (m *MysqlType) SetPage(page, pageSize int) *MysqlType {
 	if 0 == page {
 		page = 1
 	}
@@ -39,14 +35,18 @@ func (m *MysqlType) SetFiled(filed string) *MysqlType {
 	return m
 }
 
-func (m *MysqlType) SetJoinTable(joinTableName, condition, join string) *MysqlType {
-	m.joinTableList = append(m.joinTableList, JoinTableType{joinTableName, condition, join})
+func (m *MysqlType) SetJoinTable(joinTable string) *MysqlType {
+	m.joinTableList = append(m.joinTableList, joinTable)
 	return m
 }
 
-func (m *MysqlType) SetCreateTime(startDate, endDate string) *MysqlType {
-	condition := fmt.Sprintf("a.create_time BETWEEN '%s' and '%s'", startDate, endDate)
-	m.Where(condition)
+func (m *MysqlType) SetGroupBy(groupByFiled string) *MysqlType {
+	m.groupByFiled = groupByFiled
+	return m
+}
+
+func (m *MysqlType) SetOrderBy(orderByString string) *MysqlType {
+	m.orderByString = orderByString
 	return m
 }
 
@@ -56,6 +56,7 @@ func (m *MysqlType) Where(condition string) {
 
 func (m *MysqlType) Get(data interface{}) int {
 	m.build()
+	fmt.Println(m.sql)
 	// 定一个临时结构体用于获取总条数
 	total := struct{ Total int }{}
 	db := dbManager.GetInstance()
@@ -65,7 +66,12 @@ func (m *MysqlType) Get(data interface{}) int {
 }
 
 func (m *MysqlType) build() {
-	// 构建条件
+	// 处理join语句
+	for _, joinTable := range m.joinTableList {
+		m.sql = fmt.Sprintf("%s %s", m.sql, joinTable)
+	}
+
+	// 处理where条件
 	if 0 < len(m.whereList) {
 		m.sql = fmt.Sprintf("%swhere", m.sql)
 	}
@@ -76,8 +82,21 @@ func (m *MysqlType) build() {
 			m.sql = fmt.Sprintf("%s and %s", m.sql, where)
 		}
 	}
-	// 处理limit
-	m.sql = fmt.Sprintf("%s %s", m.sql, m.limit)
+
+	// 处理groupBy
+	if "" != m.groupByFiled {
+		m.sql = fmt.Sprintf("%s group by %s", m.sql, m.groupByFiled)
+	}
+
+	// 处理orderBy
+	if "" != m.orderByString {
+		m.sql = fmt.Sprintf("%s order by %s", m.sql, m.orderByString)
+	}
+
+	if "" != m.limit {
+		// 处理limit
+		m.sql = fmt.Sprintf("%s %s", m.sql, m.limit)
+	}
 
 	// 处理sql开始部分
 	m.sql = fmt.Sprintf("select SQL_CALC_FOUND_ROWS %s from %s a %s", m.filed, m.tableName, m.sql)

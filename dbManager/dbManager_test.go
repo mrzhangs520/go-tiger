@@ -26,7 +26,7 @@ func (b BaseModel) BeforeUpdate(*gorm.DB) error {
 
 type AdminModel struct {
 	BaseModel
-	Id        uint   `gorm:"primaryKey" json:"id"`
+	Id        int    `gorm:"primaryKey" json:"id"`
 	AdminName string `json:"admin_name"`
 	Password  string `json:"-"`
 	Mobile    string `json:"phone"`
