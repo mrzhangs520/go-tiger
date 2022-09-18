@@ -61,3 +61,12 @@ func (m *myOssType) GetToken(path string) string {
 	}
 	return token
 }
+
+// IsFileExist 判断文件是否存在
+func (m *myOssType) IsFileExist(path string) bool {
+	res, err := m.bucket.IsObjectExist(path)
+	if nil != err {
+		panic(dError.NewError("上传系统错误", "aliOss.GetToken.bucket.SignURL", err))
+	}
+	return res
+}
