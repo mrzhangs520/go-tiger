@@ -52,3 +52,12 @@ func (m *myOssType) UploadFile(localFilePath, dir string) string {
 	// 返回新地址
 	return fmt.Sprintf("%s/%s", cdnHost, filePath)
 }
+
+// GetToken 获取token
+func (m *myOssType) GetToken(path string) string {
+	token, err := m.bucket.SignURL(path, oss.HTTPPut, 600)
+	if nil != err {
+		panic(dError.NewError("上传系统错误", "aliOss.GetToken.bucket.SignURL", err))
+	}
+	return token
+}
