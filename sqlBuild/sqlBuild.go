@@ -3,9 +3,11 @@ package sqlBuild
 import (
 	"fmt"
 	"github.com/mrzhangs520/go-tiger/dbManager"
+	"gorm.io/gorm"
 )
 
 type MysqlType struct {
+	tx            *gorm.DB
 	orderByString string
 	groupByFiled  string
 	filed         string
@@ -14,6 +16,17 @@ type MysqlType struct {
 	tableName     string
 	joinTableList []string
 	whereList     []string
+}
+
+func (m *MysqlType) OpenTx(tx *gorm.DB) {
+	m.tx = tx
+}
+
+func (m *MysqlType) db() *gorm.DB {
+	if nil != m.tx {
+		return m.tx
+	}
+	return dbManager.GetInstance()
 }
 
 func (m *MysqlType) SetPage(page, pageSize int) *MysqlType {
@@ -59,7 +72,7 @@ func (m *MysqlType) Get(data interface{}) int {
 	fmt.Println(m.sql)
 	// 定一个临时结构体用于获取总条数
 	total := struct{ Total int }{}
-	db := dbManager.GetInstance()
+	db := m.db()
 	db.Raw(m.sql).Scan(data)
 	db.Raw("SELECT FOUND_ROWS() as total").Scan(&total)
 	return total.Total
