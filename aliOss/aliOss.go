@@ -84,7 +84,7 @@ func (m *myOssType) GetToken(path string) policyTokenType {
 
 	now := time.Now().Unix()
 	// 过期时间600s
-	expireEndTime := now + 600000
+	expireEndTime := now + 3600
 	var tokenExpire = getGmtIso8601(expireEndTime)
 
 	//create post policy json
