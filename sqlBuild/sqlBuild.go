@@ -18,8 +18,9 @@ type MysqlType struct {
 	whereList     []string
 }
 
-func (m *MysqlType) OpenTx(tx *gorm.DB) {
+func (m *MysqlType) OpenTx(tx *gorm.DB) *MysqlType {
 	m.tx = tx
+	return m
 }
 
 func (m *MysqlType) db() *gorm.DB {
