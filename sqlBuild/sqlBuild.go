@@ -86,7 +86,6 @@ func (m *MysqlType) Get(data interface{}) int {
 	if autoTx {
 		db.Commit()
 	}
-	fmt.Println(m.sql)
 	return total.Total
 }
 
