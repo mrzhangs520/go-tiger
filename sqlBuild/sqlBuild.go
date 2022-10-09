@@ -27,7 +27,7 @@ func (m *MysqlType) db() *gorm.DB {
 	if nil != m.tx {
 		return m.tx
 	}
-	return nil
+	return dbManager.GetInstance().Session(&gorm.Session{})
 }
 
 func (m *MysqlType) SetPage(page, pageSize int) *MysqlType {
@@ -72,21 +72,12 @@ func (m *MysqlType) Get(data interface{}) int {
 	m.build()
 	// 定一个临时结构体用于获取总条数
 	total := struct{ Total int }{}
-	// 如果开启了外部事物，则这里无需开启事务
+
 	db := m.db()
-	autoTx := false
-	if nil == db {
-		autoTx = true
-		db = dbManager.GetInstance().Begin()
-	}
 	db.Raw(m.sql).Scan(data)
+
 	db.Raw("SELECT FOUND_ROWS() as total").Scan(&total)
 
-	// 没有外部事物情况下，自动事务要提交
-	if autoTx {
-		db.Commit()
-	}
-	fmt.Println(m.sql)
 	return total.Total
 }
 

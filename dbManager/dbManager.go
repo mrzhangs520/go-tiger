@@ -26,7 +26,9 @@ func init() {
 
 	var err error
 
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: new(logger),
+	})
 
 	if nil != err {
 		panic(dError.NewError("连接数据库出错", "dbManager.init.gorm.Open", err))
