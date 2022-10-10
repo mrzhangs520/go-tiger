@@ -44,6 +44,9 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	if "INSERT INTO `log`" == sql[:17] {
 		return
 	}
+	if "SELECT FOUND_ROWS() as total" == sql {
+		return
+	}
 	printString := ""
 
 	if nil != err && "record not found" != err.Error() {
