@@ -36,10 +36,6 @@ func (l logger) Error(ctx context.Context, msg string, data ...interface{}) {
 
 // Trace print sql message
 func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
-	// 线上环境直接return
-	if "produce" == core.Mode {
-		return
-	}
 	sql, rowNum := fc()
 	if "INSERT INTO `log`" == sql[:17] {
 		return
@@ -52,6 +48,10 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	if nil != err && "record not found" != err.Error() {
 		printString = fmt.Sprintf(gormLogger.Red+"%s (%s)"+gormLogger.Reset, sql, err.Error())
 	} else {
+		// 线上环境直接return
+		if "produce" == core.Mode {
+			return
+		}
 		printString = fmt.Sprintf(gormLogger.Green+"%s (%d)"+gormLogger.Reset, sql, rowNum)
 	}
 
