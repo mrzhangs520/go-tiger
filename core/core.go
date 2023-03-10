@@ -9,6 +9,7 @@ import (
 func init() {
 	// 创建temp文件夹
 	_ = os.Mkdir(fmt.Sprintf("%s/log", AppPath), 0777)
+	_ = os.Mkdir(fmt.Sprintf("%s/temp", AppPath), 0777)
 }
 
 func Start() {
