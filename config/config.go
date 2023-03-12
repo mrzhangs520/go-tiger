@@ -14,7 +14,7 @@ func init() {
 	var err error
 	instance, err = ini.Load(configPath)
 	if err != nil {
-		panic(dError.NewError("读取配置文件出错", "config.GetInstance.ini.Load", err))
+		panic(dError.NewError("读取配置文件出错", err))
 	}
 }
 

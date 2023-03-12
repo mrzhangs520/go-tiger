@@ -3,12 +3,11 @@ package dError
 import "errors"
 
 type errorType struct {
-	PanicCode    string
-	SourceErr    error
-	PanicUserMag string
+	SourceErr error
+	UserMag   string
 }
 
-func NewError(panicUserMag, panicCode string, sourceErrList ...error) *errorType {
+func NewError(userMag string, sourceErrList ...error) *errorType {
 	var err error
 	if 0 == len(sourceErrList) {
 		err = errors.New("")
@@ -16,14 +15,13 @@ func NewError(panicUserMag, panicCode string, sourceErrList ...error) *errorType
 		err = sourceErrList[0]
 	}
 	return &errorType{
-		PanicUserMag: panicUserMag,
-		PanicCode:    panicCode,
-		SourceErr:    err,
+		UserMag:   userMag,
+		SourceErr: err,
 	}
 }
 
 func (e *errorType) Error() string {
-	return e.PanicUserMag
+	return e.UserMag
 }
 
 func (e *errorType) GetContent() *errorType {

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/mrzhangs520/go-tiger/config"
-	"github.com/mrzhangs520/go-tiger/dError"
 	"hash"
 	"io"
 	"path/filepath"
@@ -19,7 +18,7 @@ type myOssType struct {
 	bucket *oss.Bucket
 }
 
-func New() *myOssType {
+func New() (*myOssType, error) {
 	aliOssConfig := config.GetInstance().Section("aliOss")
 	endpoint := aliOssConfig.Key("endpoint").Value()
 	accessKeyId := aliOssConfig.Key("accessKeyId").Value()
@@ -28,18 +27,18 @@ func New() *myOssType {
 
 	client, err := oss.New(endpoint, accessKeyId, accessKeySecret)
 	if err != nil {
-		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.oss.New", err))
+		return nil, err
 	}
 	bucket, err := client.Bucket(bucketName)
 	if err != nil {
-		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.client.Bucket", err))
+		return nil, err
 	}
 	myOss := new(myOssType)
 	myOss.bucket = bucket
-	return myOss
+	return myOss, nil
 }
 
-func (m *myOssType) UploadFile(localFilePath, dir string) string {
+func (m *myOssType) UploadFile(localFilePath, dir string) (string, error) {
 	// 获取本地文件名
 	_, fileName := filepath.Split(localFilePath)
 	serverName := config.GetInstance().Section("core").Key("serverName").Value()
@@ -52,11 +51,11 @@ func (m *myOssType) UploadFile(localFilePath, dir string) string {
 	// 上传
 	err := m.bucket.PutObjectFromFile(filePath, localFilePath)
 	if err != nil {
-		panic(dError.NewError("上传系统错误", "aliOss.UploadFile.bucket.PutObjectFromFile", err))
+		return "", err
 	}
 
 	// 返回新地址
-	return fmt.Sprintf("%s/%s", cdnHost, filePath)
+	return fmt.Sprintf("%s/%s", cdnHost, filePath), nil
 }
 
 type policyTokenType struct {
@@ -69,7 +68,7 @@ type policyTokenType struct {
 }
 
 // GetToken 获取token
-func (m *myOssType) GetToken(path string) policyTokenType {
+func (m *myOssType) GetToken(path string) (policyTokenType, error) {
 	var err error
 
 	aliOssConfig := config.GetInstance().Section("aliOss")
@@ -99,13 +98,13 @@ func (m *myOssType) GetToken(path string) policyTokenType {
 	// 计算签名
 	result, err := json.Marshal(configInfo)
 	if nil != err {
-		panic(dError.NewError("获取上传签名错误", "aliOss.GetToken.json.Marshal(configInfo)", err))
+		return policyTokenType{}, err
 	}
 	deByte := base64.StdEncoding.EncodeToString(result)
 	h := hmac.New(func() hash.Hash { return sha1.New() }, []byte(accessKeySecret))
 	_, err = io.WriteString(h, deByte)
 	if err != nil {
-		panic(dError.NewError("获取上传签名错误", "aliOss.GetToken.io.WriteString", err))
+		return policyTokenType{}, err
 	}
 	signedStr := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
@@ -117,14 +116,14 @@ func (m *myOssType) GetToken(path string) policyTokenType {
 	policyToken.Directory = path
 	policyToken.Policy = deByte
 
-	return policyToken
+	return policyToken, nil
 }
 
 // IsFileExist 判断文件是否存在
 func (m *myOssType) IsFileExist(path string) bool {
 	res, err := m.bucket.IsObjectExist(path)
 	if nil != err {
-		panic(dError.NewError("上传系统错误", "aliOss.GetToken.bucket.SignURL", err))
+		return false
 	}
 	return res
 }

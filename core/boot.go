@@ -23,7 +23,7 @@ func init() {
 func initAppPth() {
 	dirString, err := os.Getwd()
 	if nil != err {
-		panic(dError.NewError("找不到项目根目录！", "tools.init.os.Getwd"))
+		panic(dError.NewError("找不到项目根目录！", err))
 	}
 	for {
 		mainPath := fmt.Sprintf("%s/main.go", dirString)
@@ -33,7 +33,7 @@ func initAppPth() {
 		}
 		// 直到根目录依然没有找到main.go
 		if "/" == dirString {
-			panic(dError.NewError("找不到项目根目录！", "tools.init.times"))
+			panic(dError.NewError("找不到项目根目录！", err))
 		}
 		dirString = filepath.Dir(dirString)
 	}
