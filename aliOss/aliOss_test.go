@@ -6,14 +6,11 @@ import (
 	"testing"
 )
 
-func TestGetToken(t *testing.T) {
+func TestHandleUrlHost(t *testing.T) {
 	core.Start()
-	token := New().GetToken("/go-api-shop")
-	spew.Dump(token)
-}
-
-func TestIsFileExist(t *testing.T) {
-	core.Start()
-	res := New().IsFileExist("go-api-shop/system/cut-img/go-api-shop/upload/media/origin-mov/of1r9-e1df-fq1df/测试.jpg")
-	spew.Dump(res)
+	url := "https://oss01.tiger12345.cc/go-api-shop/upload/2023-03-12/中文重重.JPG"
+	url = HandleUrlUnicode(url)
+	spew.Dump(url)
+	url = HandleUrlHost(url)
+	spew.Dump(url)
 }

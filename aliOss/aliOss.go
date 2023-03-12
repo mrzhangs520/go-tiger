@@ -10,7 +10,10 @@ import (
 	"github.com/mrzhangs520/go-tiger/config"
 	"hash"
 	"io"
+	"net/url"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"time"
 )
 
@@ -131,4 +134,23 @@ func (m *myOssType) IsFileExist(path string) bool {
 func getGmtIso8601(expireEnd int64) string {
 	var tokenExpire = time.Unix(expireEnd, 0).UTC().Format("2006-01-02T15:04:05Z")
 	return tokenExpire
+}
+
+// HandleUrlHost 地址域名转化成内网
+func HandleUrlHost(hostUrl string) string {
+	aliOssConfig := config.GetInstance().Section("aliOss")
+	oldUrl := aliOssConfig.Key("cdnHost").Value()
+	newUrl := aliOssConfig.Key("internalHost").Value()
+	hostUrl = strings.Replace(hostUrl, oldUrl, newUrl, 1)
+	return hostUrl
+}
+
+// HandleUrlUnicode 中文处理成unicode
+func HandleUrlUnicode(hostUrl string) string {
+	re := regexp.MustCompile("[\u4e00-\u9fa5]+")
+	chineseChar := re.FindAllString(hostUrl, -1)
+	for _, r := range chineseChar {
+		hostUrl = strings.Replace(hostUrl, r, url.QueryEscape(r), -1)
+	}
+	return hostUrl
 }
