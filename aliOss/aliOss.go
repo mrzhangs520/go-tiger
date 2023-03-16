@@ -61,6 +61,30 @@ func (m *myOssType) UploadFile(localFilePath, dir, fileName string, options ...o
 	return fmt.Sprintf("%s/%s", cdnHost, filePath), nil
 }
 
+func (m *myOssType) SymlinkFile(originFilePath, dir, fileName string, options ...oss.Option) (string, error) {
+	serverName := config.GetInstance().Section("core").Key("serverName").Value()
+	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
+
+	originFilePathArr := strings.Split(originFilePath, fmt.Sprintf("%s/", cdnHost))
+	originFilePath = originFilePathArr[0]
+	if len(originFilePathArr) >= 2 {
+		originFilePath = originFilePathArr[1]
+	}
+	// 组装新地址
+	date := time.Now().Format("200601/02")
+	unixMicro := time.Now().UnixMicro()
+	newFilePath := fmt.Sprintf("%s/%s/%s/%d/%s", serverName, dir, date, unixMicro, fileName)
+
+	// 软连接
+	err := m.bucket.PutSymlink(newFilePath, originFilePath, options...)
+	if err != nil {
+		return "", err
+	}
+
+	// 返回新地址
+	return fmt.Sprintf("%s/%s", cdnHost, newFilePath), nil
+}
+
 type policyTokenType struct {
 	AccessKeyId string `json:"access_id"`
 	Host        string `json:"host"`
