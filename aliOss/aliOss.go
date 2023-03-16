@@ -11,7 +11,6 @@ import (
 	"hash"
 	"io"
 	"net/url"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -41,18 +40,19 @@ func New() (*myOssType, error) {
 	return myOss, nil
 }
 
-func (m *myOssType) UploadFile(localFilePath, dir string) (string, error) {
+func (m *myOssType) UploadFile(localFilePath, dir, fileName string, options ...oss.Option) (string, error) {
 	// 获取本地文件名
-	_, fileName := filepath.Split(localFilePath)
 	serverName := config.GetInstance().Section("core").Key("serverName").Value()
 	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
 
-	// 拼接上项目地址
 	date := time.Now().Format("200601/02")
-	filePath := fmt.Sprintf("%s/%s/%s/%s", serverName, dir, date, fileName)
+	unixMicro := time.Now().UnixMicro()
+
+	// 组装上传后的oss地址
+	filePath := fmt.Sprintf("%s/%s/%s/%d/%s", serverName, dir, date, unixMicro, fileName)
 
 	// 上传
-	err := m.bucket.PutObjectFromFile(filePath, localFilePath)
+	err := m.bucket.PutObjectFromFile(filePath, localFilePath, options...)
 	if err != nil {
 		return "", err
 	}
