@@ -16,11 +16,11 @@ import (
 	"time"
 )
 
-type myOssType struct {
+type MyOssType struct {
 	bucket *oss.Bucket
 }
 
-func New() (*myOssType, error) {
+func New() (*MyOssType, error) {
 	aliOssConfig := config.GetInstance().Section("aliOss")
 	endpoint := aliOssConfig.Key("endpoint").Value()
 	accessKeyId := aliOssConfig.Key("accessKeyId").Value()
@@ -35,12 +35,12 @@ func New() (*myOssType, error) {
 	if err != nil {
 		return nil, err
 	}
-	myOss := new(myOssType)
+	myOss := new(MyOssType)
 	myOss.bucket = bucket
 	return myOss, nil
 }
 
-func (m *myOssType) UploadFile(localFilePath, dir, fileName string, options ...oss.Option) (string, error) {
+func (m *MyOssType) UploadFile(localFilePath, dir, fileName string, options ...oss.Option) (string, error) {
 	// 获取本地文件名
 	serverName := config.GetInstance().Section("core").Key("serverName").Value()
 	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
@@ -61,7 +61,7 @@ func (m *myOssType) UploadFile(localFilePath, dir, fileName string, options ...o
 	return fmt.Sprintf("%s/%s", cdnHost, filePath), nil
 }
 
-func (m *myOssType) SymlinkFile(originFilePath, dir, fileName string, options ...oss.Option) (string, error) {
+func (m *MyOssType) SymlinkFile(originFilePath, dir, fileName string, options ...oss.Option) (string, error) {
 	serverName := config.GetInstance().Section("core").Key("serverName").Value()
 	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
 
@@ -95,7 +95,7 @@ type policyTokenType struct {
 }
 
 // GetToken 获取token
-func (m *myOssType) GetToken(path string) (policyTokenType, error) {
+func (m *MyOssType) GetToken(path string) (policyTokenType, error) {
 	var err error
 
 	aliOssConfig := config.GetInstance().Section("aliOss")
@@ -147,7 +147,7 @@ func (m *myOssType) GetToken(path string) (policyTokenType, error) {
 }
 
 // IsFileExist 判断文件是否存在
-func (m *myOssType) IsFileExist(path string) bool {
+func (m *MyOssType) IsFileExist(path string) bool {
 	res, err := m.bucket.IsObjectExist(path)
 	if nil != err {
 		return false
