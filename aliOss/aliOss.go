@@ -165,6 +165,7 @@ func HandleUrlHost(hostUrl string) string {
 	aliOssConfig := config.GetInstance().Section("aliOss")
 	oldUrl := aliOssConfig.Key("cdnHost").Value()
 	newUrl := aliOssConfig.Key("internalHost").Value()
+
 	hostUrl = strings.Replace(hostUrl, oldUrl, newUrl, 1)
 	return hostUrl
 }
