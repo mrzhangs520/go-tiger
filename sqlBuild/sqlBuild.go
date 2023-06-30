@@ -16,6 +16,7 @@ type MysqlType struct {
 	tableName     string
 	joinTableList []string
 	whereList     []string
+	withCount     string
 }
 
 func (m *MysqlType) OpenTx(tx *gorm.DB) *MysqlType {
@@ -69,6 +70,8 @@ func (m *MysqlType) Where(condition string) {
 }
 
 func (m *MysqlType) Get(data interface{}) int {
+	m.withCount = "SQL_CALC_FOUND_ROWS"
+
 	m.build()
 	// 定一个临时结构体用于获取总条数
 	total := struct{ Total int }{}
@@ -87,6 +90,21 @@ func (m *MysqlType) Get(data interface{}) int {
 		db.Commit()
 	}
 	return total.Total
+}
+
+func (m *MysqlType) Count() int {
+	m.filed = "COUNT(*) as total"
+	m.build()
+	// 定一个临时结构体用于获取总条数
+	total := 0
+	// 如果开启了外部事物，则这里无需开启事务
+	db := m.db()
+	if nil == db {
+		db = dbManager.GetInstance()
+	}
+	db.Raw(m.sql).Scan(&total)
+
+	return total
 }
 
 func (m *MysqlType) build() {
@@ -123,5 +141,5 @@ func (m *MysqlType) build() {
 	}
 
 	// 处理sql开始部分
-	m.sql = fmt.Sprintf("select SQL_CALC_FOUND_ROWS %s from %s a %s", m.filed, m.tableName, m.sql)
+	m.sql = fmt.Sprintf("select %s %s from %s a %s", m.withCount, m.filed, m.tableName, m.sql)
 }
