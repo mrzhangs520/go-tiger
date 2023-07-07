@@ -10,8 +10,6 @@ import (
 	"github.com/mrzhangs520/go-tiger/config"
 	"hash"
 	"io"
-	"net/url"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -167,15 +165,5 @@ func HandleUrlHost(hostUrl string) string {
 	newUrl := aliOssConfig.Key("internalHost").Value()
 
 	hostUrl = strings.Replace(hostUrl, oldUrl, newUrl, 1)
-	return hostUrl
-}
-
-// HandleUrlUnicode 中文处理成unicode
-func HandleUrlUnicode(hostUrl string) string {
-	re := regexp.MustCompile("[\u4e00-\u9fa5]+")
-	chineseChar := re.FindAllString(hostUrl, -1)
-	for _, r := range chineseChar {
-		hostUrl = strings.Replace(hostUrl, r, url.QueryEscape(r), -1)
-	}
 	return hostUrl
 }
