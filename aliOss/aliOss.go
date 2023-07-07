@@ -59,6 +59,20 @@ func (m *MyOssType) UploadFile(localFilePath, dir, fileName string, options ...o
 	return fmt.Sprintf("%s/%s", cdnHost, filePath), nil
 }
 
+func (m *MyOssType) UploadFileOrigin(localFilePath, originFilePath string, options ...oss.Option) (string, error) {
+	// 获取本地文件名
+	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
+
+	// 上传
+	err := m.bucket.PutObjectFromFile(originFilePath, localFilePath, options...)
+	if err != nil {
+		return "", err
+	}
+
+	// 返回新地址
+	return fmt.Sprintf("%s/%s", cdnHost, originFilePath), nil
+}
+
 func (m *MyOssType) SymlinkFile(originFilePath, dir, fileName string, options ...oss.Option) (string, error) {
 	serverName := config.GetInstance().Section("core").Key("serverName").Value()
 	cdnHost := config.GetInstance().Section("aliOss").Key("cdnHost").Value()
