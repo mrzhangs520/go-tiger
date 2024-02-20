@@ -48,8 +48,8 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 	if nil != err && "record not found" != err.Error() {
 		printString = fmt.Sprintf(gormLogger.Red+"%s (%s)"+gormLogger.Reset, sql, err.Error())
 	} else {
-		// 线上环境直接return
-		if "produce" == core.Mode {
+		// 仅本地环境打印sql正常日志
+		if "local" != core.Mode {
 			return
 		}
 		printString = fmt.Sprintf(gormLogger.Green+"%s (%d)"+gormLogger.Reset, sql, rowNum)
