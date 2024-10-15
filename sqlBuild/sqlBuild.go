@@ -65,8 +65,9 @@ func (m *MysqlType) SetOrderBy(orderByString string) *MysqlType {
 	return m
 }
 
-func (m *MysqlType) Where(condition string) {
+func (m *MysqlType) Where(condition string) *MysqlType {
 	m.whereList = append(m.whereList, condition)
+	return m
 }
 
 func (m *MysqlType) Get(data interface{}) int {
